@@ -210,7 +210,7 @@ class LanceDBVectorStore(BasePydanticVectorStore):
 
         """
         table = self._connection.open_table(self.table_name)
-        table.delete('doc_id = "' + ref_doc_id + '"')
+        table.delete('document_id = "' + ref_doc_id + '"')
 
     def query(
         self,
