@@ -1,5 +1,43 @@
 # ChangeLog
 
+## [0.10.16] - 2024-03-05
+
+### New Features
+
+- Anthropic support for new models (#11623, #11612)
+- Easier creation of chat prompts (#11583)
+- Added a raptor retriever llama-pack (#11527)
+- Improve batch cohere embeddings through bedrock (#11572)
+- Added support for vertex AI embeddings (#11561)
+
+### Bug Fixes / Nits
+
+- Ensure order in async embeddings generation (#11562)
+- Fixed empty metadata for csv reader (#11563)
+- Serializable fix for composable retrievers (#11617)
+- Fixed milvus metadata filter support (#11566)
+- FIxed pydantic import in clickhouse vector store (#11631)
+- Fixed system prompts for gemini/vertext-gemini (#11511)
+
+## [0.10.15] - 2024-03-01
+
+### New Features
+
+- Added FeishuWikiReader (#11491)
+- Added videodb retriever integration (#11463)
+- Added async to opensearch vector store (#11513)
+- New LangFuse one-click callback handler (#11324)
+
+### Bug Fixes / Nits
+
+- Fixed deadlock issue with async chat streaming (#11548)
+- Improved hidden file check in SimpleDirectoryReader (#11496)
+- Fixed null values in document metadata when using SimpleDirectoryReader (#11501)
+- Fix for sqlite utils in jsonalyze query engine (#11519)
+- Added base url and timeout to ollama multimodal LLM (#11526)
+- Updated duplicate handling in query fusion retriever (#11542)
+- Fixed bug in kg indexx struct updating (#11475)
+
 ## [0.10.14] - 2024-02-28
 
 ### New Features
