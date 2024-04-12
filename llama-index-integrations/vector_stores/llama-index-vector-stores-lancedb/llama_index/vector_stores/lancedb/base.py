@@ -74,6 +74,10 @@ class LanceDBVectorStore(BasePydanticVectorStore):
         refine_factor: (int, optional): Refine the results by reading extra elements
             and re-ranking them in memory.
             Defaults to None
+        api_key (str, optional): The API key to use LanceDB cloud.
+            Defaults to None.
+        region (str, optional): The region to use for your LanceDB cloud db.
+            Defaults to None.
 
     Raises:
         ImportError: Unable to import `lancedb`.
@@ -102,6 +106,8 @@ class LanceDBVectorStore(BasePydanticVectorStore):
     refine_factor: Optional[int]
     text_key: Optional[str]
     doc_id_key: Optional[str]
+    api_key: Optional[str]
+    region: Optional[str]
 
     def __init__(
         self,
@@ -112,10 +118,16 @@ class LanceDBVectorStore(BasePydanticVectorStore):
         refine_factor: Optional[int] = None,
         text_key: str = DEFAULT_TEXT_KEY,
         doc_id_key: str = DEFAULT_DOC_ID_KEY,
+        api_key: Optional[str] = None,
+        region: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Init params."""
-        self._connection = lancedb.connect(uri)
+        if api_key is not None:
+            self._connection = lancedb.connect(uri, api_key=api_key, region=region)
+        else:
+            self._connection = lancedb.connect(uri)
+
         super().__init__(
             uri=uri,
             table_name=table_name,
