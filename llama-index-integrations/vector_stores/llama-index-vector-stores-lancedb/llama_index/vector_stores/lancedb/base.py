@@ -1,7 +1,9 @@
 """LanceDB vector store."""
 
+import os
 import logging
 from typing import Any, List, Optional
+import warnings
 
 import numpy as np
 from llama_index.core.bridge.pydantic import PrivateAttr
@@ -75,7 +77,7 @@ class LanceDBVectorStore(BasePydanticVectorStore):
             and re-ranking them in memory.
             Defaults to None
         api_key (str, optional): The API key to use LanceDB cloud.
-            Defaults to None.
+            Defaults to None. You can also set the `LANCE_API_KEY` environment variable.
         region (str, optional): The region to use for your LanceDB cloud db.
             Defaults to None.
 
@@ -111,7 +113,8 @@ class LanceDBVectorStore(BasePydanticVectorStore):
 
     def __init__(
         self,
-        uri: Optional[str],
+        connection: Optional[Any] = None,
+        uri: Optional[str] = "/tmp/lancedb",
         table_name: str = "vectors",
         vector_column_name: str = "vector",
         nprobes: int = 20,
@@ -123,10 +126,26 @@ class LanceDBVectorStore(BasePydanticVectorStore):
         **kwargs: Any,
     ) -> None:
         """Init params."""
-        if api_key is not None:
-            self._connection = lancedb.connect(uri, api_key=api_key, region=region)
+        if os.getenv("LANCE_API_KEY") is not None:
+            api_key = os.getenv("LANCE_API_KEY")
+
+        if "db://" in uri and api_key is None:
+            raise ValueError("API key is required for LanceDB cloud db.")
+
+        if isinstance(connection, lancedb.db.LanceTable):
+            self._connection = connection
+        elif isinstance(connection, str):
+            raise ValueError("`connection` has to be a lancedb.db.LanceTable object.")
         else:
-            self._connection = lancedb.connect(uri)
+            if api_key is None:
+                self._connection = lancedb.connect(uri)
+            else:
+                if "db://" not in uri:
+                    self._connection = lancedb.connect(uri)
+                    warnings.warn(
+                        "api key provided with local uri. The data will be stored locally"
+                    )
+                self._connection = lancedb.connect(uri, api_key=api_key, region=region)
 
         super().__init__(
             uri=uri,
